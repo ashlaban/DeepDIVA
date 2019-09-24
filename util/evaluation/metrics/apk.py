@@ -36,7 +36,7 @@ def apk(query, predicted, k='full'):
     assert (len(predicted) > 0)
 
     # Count the number of relevant items that could be retrieved
-    num_hits = predicted.count(query)
+    num_hits = np.sum(predicted == query)
     if num_hits == 0:
         return 0
 
@@ -67,8 +67,8 @@ def apk(query, predicted, k='full'):
     relevant = np.zeros(len(predicted))
 
     # Find all locations where the predicted value matches the query and vice-versa.
-    hit_locs = np.where(predicted == query)[0]
-    non_hit_locs = np.where(predicted != query)[0]
+    hit_locs = (predicted == query)
+    non_hit_locs = np.logical_not(hit_locs)
 
     # Set all `hit_locs` to be 1. [0,0,0,0,0,0] -> [0,1,0,1,0,1]
     relevant[hit_locs] = 1
@@ -167,7 +167,10 @@ def compute_mapk(distances, labels, k, workers=None):
     ind = ind[np.arange(ind.shape[0])[:, None], ssd]
     # Now `ind` contains the sorted indexes of the lowest `max_count` (k) elements
     # Resolve the labels of the elements referred by `ind`
-    sorted_predictions = [list(labels[row][1:]) for row in ind]
+    sorted_predictions = np.empty(shape=(max_count, max_count), dtype=np.int)
+    for i, row in enumerate(ind):
+            sorted_predictions[i, :] = labels[row][1:]
+
     logging.debug('Finished computing sorted predictions in {} seconds'
                   .format(datetime.timedelta(seconds=int(time.time() - t))))
 
