@@ -160,12 +160,17 @@ def compute_mapk(distances, labels, k, workers=None):
 
     # Fetch the index of the lowest `max_count` (k) elements
     t = time.time()
-    ind = np.argpartition(distances, max_count - 1)[:, :max_count]
-    # Find the sorting sequence according to the shortest distances selected from `ind`
-    ssd = np.argsort(np.array(distances)[np.arange(distances.shape[0])[:, None], ind], axis=1)
-    # Consequently sort `ind`
-    ind = ind[np.arange(ind.shape[0])[:, None], ssd]
-    # Now `ind` contains the sorted indexes of the lowest `max_count` (k) elements
+    if k != 'full':
+        ind = np.argpartition(distances, max_count - 1)[:, :max_count]
+        # Find the sorting sequence according to the shortest distances selected from `ind`
+        ssd = np.argsort(np.array(distances)[np.arange(distances.shape[0])[:, None], ind], axis=1)
+        # Consequently sort `ind`
+        ind = ind[np.arange(ind.shape[0])[:, None], ssd]
+        # Now `ind` contains the sorted indexes of the lowest `max_count` (k) elements
+    else:
+        # If we're in full mode, just do the sorting directly
+        ind = np.argsort(distances)
+
     # Resolve the labels of the elements referred by `ind`
     sorted_predictions = np.empty(shape=(max_count, max_count), dtype=np.int)
     for i, row in enumerate(ind):
