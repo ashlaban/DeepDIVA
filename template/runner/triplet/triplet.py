@@ -103,7 +103,7 @@ class Triplet:
 
             logging.info('Begin training')
             Triplet._validate(val_loader, model, writer, -1, **kwargs)
-            for epoch in range(start_epoch, epochs):
+            for epoch in range(epochs):
                 # Train
                 train_value[epoch] = Triplet._train(train_loader=train_loader,
                                                     model=model,
