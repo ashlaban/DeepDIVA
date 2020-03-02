@@ -106,4 +106,10 @@ def train(train_loader, model, criterion, optimizer, writer, epoch, no_cuda, log
         batch_time.update(time.time() - end)
         end = time.time()
 
+    # Add epoch loss to Tensorboard
+    if multi_run is None:
+        writer.add_scalar('train/epoch_loss', loss.item(), epoch)
+    else:
+        writer.add_scalar('train/epoch_loss_{}'.format(multi_run), loss.item(), epoch)
+
     return 0

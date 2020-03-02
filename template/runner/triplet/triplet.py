@@ -102,7 +102,7 @@ class Triplet:
             # Core routine
 
             logging.info('Begin training')
-            Triplet._validate(val_loader, model, writer, -1, **kwargs)
+            Triplet._validate(val_loader, model, criterion, writer, -1, **kwargs)
             for epoch in range(epochs):
                 # Train
                 train_value[epoch] = Triplet._train(train_loader=train_loader,
@@ -116,6 +116,7 @@ class Triplet:
                 if epoch % validation_interval == 0:
                     val_value[epoch] = Triplet._validate(val_loader=val_loader,
                                                          model=model,
+                                                         criterion=criterion,
                                                          writer=writer,
                                                          epoch=epoch,
                                                          **kwargs)
